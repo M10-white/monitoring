@@ -26,7 +26,7 @@ scrape_configs:
     static_configs:
       - targets: ["nginx:80"]
 
-  # Blackbox : sonde HTTP sur Nginx pour mesurer la latence
+  # Blackbox : sonde HTTP sur Nginx (latence + disponibilité)
   - job_name: "blackbox-nginx"
     metrics_path: /probe
     params:
@@ -34,6 +34,22 @@ scrape_configs:
     static_configs:
       - targets:
           - http://nginx:80
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: __param_target
+      - source_labels: [__param_target]
+        target_label: instance
+      - target_label: __address__
+        replacement: blackbox:9115
+
+  # Blackbox : sonde TCP sur MariaDB (disponibilité port 3306)
+  - job_name: "blackbox-mariadb"
+    metrics_path: /probe
+    params:
+      module: [tcp_connect]
+    static_configs:
+      - targets:
+          - mariadb:3306
     relabel_configs:
       - source_labels: [__address__]
         target_label: __param_target
