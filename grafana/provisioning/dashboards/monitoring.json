@@ -1,0 +1,90 @@
+{
+  "title": "Monitoring Stack",
+  "uid": "monitoring-stack",
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "panels": [
+    {
+      "id": 1,
+      "title": "CPU Usage par conteneur",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name!=\"\"}[1m]) * 100",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "Mémoire utilisée par conteneur (MB)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name!=\"\"} / 1024 / 1024",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Réseau reçu par conteneur (KB/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(container_network_receive_bytes_total{name!=\"\"}[1m]) / 1024",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "title": "Réseau envoyé par conteneur (KB/s)",
+      "type": "timeseries",
+      "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "rate(container_network_transmit_bytes_total{name!=\"\"}[1m]) / 1024",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "title": "Conteneurs actifs",
+      "type": "stat",
+      "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "count(container_last_seen{name!=\"\"})"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Uptime Prometheus",
+      "type": "stat",
+      "gridPos": { "x": 6, "y": 16, "w": 6, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "time() - process_start_time_seconds{job=\"prometheus\"}"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "s"
+        }
+      }
+    }
+  ]
+}

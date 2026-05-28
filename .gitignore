@@ -1,0 +1,11 @@
+# Claude Code
+.claude/
+
+# Docker volumes (données persistantes locales)
+mariadb_data/
+prometheus_data/
+grafana_data/
+
+# OS
+.DS_Store
+Thumbs.db
