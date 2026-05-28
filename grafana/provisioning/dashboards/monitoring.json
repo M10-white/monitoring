@@ -2,12 +2,12 @@
   "title": "Monitoring Stack",
   "uid": "monitoring-stack",
   "schemaVersion": 36,
-  "version": 1,
+  "version": 2,
   "refresh": "10s",
   "panels": [
     {
       "id": 1,
-      "title": "CPU Usage par conteneur",
+      "title": "CPU Usage par conteneur (%)",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
       "datasource": "Prometheus",
@@ -67,7 +67,17 @@
         {
           "expr": "count(container_last_seen{name!=\"\"})"
         }
-      ]
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "red", "value": 0 },
+              { "color": "green", "value": 5 }
+            ]
+          }
+        }
+      }
     },
     {
       "id": 6,
@@ -84,6 +94,74 @@
         "defaults": {
           "unit": "s"
         }
+      }
+    },
+    {
+      "id": 8,
+      "title": "Latence Nginx (ms)",
+      "type": "stat",
+      "gridPos": { "x": 12, "y": 16, "w": 6, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "probe_duration_seconds{job=\"blackbox-nginx\"} * 1000"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "unit": "ms",
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "yellow", "value": 200 },
+              { "color": "red", "value": 500 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "Alertes actives",
+      "type": "stat",
+      "gridPos": { "x": 18, "y": 16, "w": 6, "h": 4 },
+      "datasource": "Prometheus",
+      "targets": [
+        {
+          "expr": "count(ALERTS{alertstate=\"firing\"}) or vector(0)"
+        }
+      ],
+      "fieldConfig": {
+        "defaults": {
+          "thresholds": {
+            "steps": [
+              { "color": "green", "value": 0 },
+              { "color": "red", "value": 1 }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "id": 7,
+      "title": "Logs des conteneurs (Loki)",
+      "type": "logs",
+      "gridPos": { "x": 0, "y": 20, "w": 24, "h": 10 },
+      "datasource": "Loki",
+      "targets": [
+        {
+          "expr": "{job=\"docker\"}",
+          "legendFormat": "{{container}}"
+        }
+      ],
+      "options": {
+        "showTime": true,
+        "showLabels": true,
+        "showCommonLabels": false,
+        "wrapLogMessage": true,
+        "sortOrder": "Descending",
+        "dedupStrategy": "none",
+        "enableLogDetails": true
       }
     }
   ]

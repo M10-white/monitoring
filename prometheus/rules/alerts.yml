@@ -1,0 +1,36 @@
+groups:
+  - name: container_alerts
+    rules:
+
+      # Règle 1 : Conteneur critique arrêté
+      - alert: ContainerDown
+        expr: |
+          absent(container_memory_usage_bytes{name="nginx"})
+          or
+          absent(container_memory_usage_bytes{name="mariadb"})
+        for: 30s
+        labels:
+          severity: critical
+        annotations:
+          summary: "Conteneur critique arrêté"
+          description: "nginx ou mariadb n'est plus détecté par cAdvisor depuis 30s."
+
+      # Règle 2 : Disque MariaDB trop plein (> 100 MB)
+      - alert: DatabaseDiskFull
+        expr: container_fs_usage_bytes{name="mariadb"} > 100 * 1024 * 1024
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Disque MariaDB élevé : {{ $value | humanize }}B"
+          description: "Le conteneur MariaDB utilise {{ $value | humanize }}B d'espace disque. Risque de saturation."
+
+      # Règle 3 : Latence Nginx > 500ms (mesurée par Blackbox Exporter)
+      - alert: NginxHighLatency
+        expr: probe_duration_seconds{job="blackbox-nginx"} > 0.5
+        for: 1m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Latence Nginx > 500ms ({{ $value }}s)"
+          description: "Le temps de réponse HTTP de Nginx dépasse 500ms depuis 1 minute."
