@@ -3,17 +3,16 @@ groups:
     rules:
 
       # Règle 1 : Conteneur critique arrêté
+      # Blackbox sonde HTTP (nginx) et TCP (mariadb) toutes les 15s.
+      # probe_success == 0 dès que le port ne répond plus → alerte quasi-immédiate.
       - alert: ContainerDown
-        expr: |
-          absent(container_memory_usage_bytes{name="nginx"})
-          or
-          absent(container_memory_usage_bytes{name="mariadb"})
-        for: 30s
+        expr: probe_success{job=~"blackbox-nginx|blackbox-mariadb"} == 0
+        for: 0s
         labels:
           severity: critical
         annotations:
-          summary: "Conteneur critique arrêté"
-          description: "nginx ou mariadb n'est plus détecté par cAdvisor depuis 30s."
+          summary: "Conteneur {{ $labels.instance }} injoignable"
+          description: "La sonde Blackbox ne peut plus atteindre {{ $labels.instance }} (job: {{ $labels.job }})."
 
       # Règle 2 : Disque MariaDB trop plein (> 100 MB)
       - alert: DatabaseDiskFull
