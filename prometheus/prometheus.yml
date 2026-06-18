@@ -22,10 +22,6 @@ scrape_configs:
     static_configs:
       - targets: ["cadvisor:8080"]
 
-  - job_name: "nginx"
-    static_configs:
-      - targets: ["nginx:80"]
-
   # Blackbox : sonde HTTP sur Nginx (latence + disponibilité)
   - job_name: "blackbox-nginx"
     metrics_path: /probe

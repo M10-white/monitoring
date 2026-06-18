@@ -10,7 +10,7 @@
       "title": "CPU Usage par conteneur (%)",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "rate(container_cpu_usage_seconds_total{name!=\"\"}[1m]) * 100",
@@ -23,7 +23,7 @@
       "title": "Mémoire utilisée par conteneur (MB)",
       "type": "timeseries",
       "gridPos": { "x": 12, "y": 0, "w": 12, "h": 8 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "container_memory_usage_bytes{name!=\"\"} / 1024 / 1024",
@@ -36,7 +36,7 @@
       "title": "Réseau reçu par conteneur (KB/s)",
       "type": "timeseries",
       "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "rate(container_network_receive_bytes_total{name!=\"\"}[1m]) / 1024",
@@ -49,7 +49,7 @@
       "title": "Réseau envoyé par conteneur (KB/s)",
       "type": "timeseries",
       "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "rate(container_network_transmit_bytes_total{name!=\"\"}[1m]) / 1024",
@@ -62,7 +62,7 @@
       "title": "Conteneurs actifs",
       "type": "stat",
       "gridPos": { "x": 0, "y": 16, "w": 6, "h": 4 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "count(container_last_seen{name!=\"\"})"
@@ -84,7 +84,7 @@
       "title": "Uptime Prometheus",
       "type": "stat",
       "gridPos": { "x": 6, "y": 16, "w": 6, "h": 4 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "time() - process_start_time_seconds{job=\"prometheus\"}"
@@ -101,7 +101,7 @@
       "title": "Latence Nginx (ms)",
       "type": "stat",
       "gridPos": { "x": 12, "y": 16, "w": 6, "h": 4 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "probe_duration_seconds{job=\"blackbox-nginx\"} * 1000"
@@ -125,7 +125,7 @@
       "title": "Alertes actives",
       "type": "stat",
       "gridPos": { "x": 18, "y": 16, "w": 6, "h": 4 },
-      "datasource": "Prometheus",
+      "datasource": { "type": "prometheus", "uid": "prometheus" },
       "targets": [
         {
           "expr": "count(ALERTS{alertstate=\"firing\"}) or vector(0)"
@@ -147,10 +147,10 @@
       "title": "Logs des conteneurs (Loki)",
       "type": "logs",
       "gridPos": { "x": 0, "y": 20, "w": 24, "h": 10 },
-      "datasource": "Loki",
+      "datasource": { "type": "loki", "uid": "loki" },
       "targets": [
         {
-          "expr": "{job=\"docker\"}",
+          "expr": "{container=~\".+\"}",
           "legendFormat": "{{container}}"
         }
       ],
